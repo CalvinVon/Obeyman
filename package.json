@@ -1,0 +1,24 @@
+{
+  "name": "obeyman",
+  "version": "0.0.1",
+  "description": "A simple object schema validate tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CalvinVon/Obeyman.git"
+  },
+  "keywords": [
+    "javascript",
+    "schema",
+    "validator"
+  ],
+  "author": "Calvin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CalvinVon/Obeyman/issues"
+  },
+  "homepage": "https://github.com/CalvinVon/Obeyman#readme"
+}
