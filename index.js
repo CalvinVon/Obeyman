@@ -1,39 +1,15 @@
-var TYPE = {
-    number: 0,
-    boolean: 1,
-    string: 2,
-    object: 3,
-    array: 4,
-    function: 5,
-    regexp: 6,
-    null: 7,
-    undefined: 8
-};
+var Schema = require('./internal/schema').Schema;
+var ObjectSchema = require('./internal/schema').ObjectSchema;
+
+var Validator = require('./internal/validator').Validator;
+var TypeValidator = require('./internal/validator').TypeValidator;
+var VALIDATORS = require('./internal/validator').VALIDATORS;
+
+var TYPE = require('./internal/type');
 
 var ERROR = {
     REQUIRED: 'this field is required',
     TYPE: 'type error'
-};
-
-var VALIDATORS = {
-    Number: function (optional, field) {
-        return new TypeValidator('number', optional, field);
-    },
-    String: function (optional, field) {
-        return new TypeValidator('string', optional, field);
-    },
-    Length: function (optional, field, limit) {
-        return new LengthValidator(optional, field, limit);
-    },
-    Boolean: function (optional, field) {
-        return new TypeValidator('boolean', optional, field);
-    },
-    Object: function (optional, field) {
-        return new TypeValidator('object', optional, field);
-    },
-    Array: function (optional, field) {
-        return new TypeValidator('array', optional, field);
-    },
 };
 
 var Atm = {
@@ -123,95 +99,11 @@ var Atm = {
         return _schema;
     },
     object: function () {
-        var _schema = new Schema();
+        var _schema = new ObjectSchema();
         _schema._validatorFactories.push(VALIDATORS.Object);
         _schema._type = 'object';
-        _schema._required = true;
         return _schema;
     }
 };
-
-function Schema() {
-    this._validatorFactories = [];
-    this._type = 'any';
-    this._required = false;
-    this._children = null;
-    this._optional = false;
-    this._length = undefined;
-}
-
-Schema.prototype.keys = function (objectSchema) {
-    if (this._type === 'object') {
-        this._children = objectSchema;
-    }
-    return this;
-};
-
-Schema.prototype.required = function () {
-    this._required = true;
-    return this;
-};
-
-Schema.prototype.optional = function () {
-    this._required = false;
-    this._optional = true;
-    return this;
-};
-
-Schema.prototype.len = function (limit) {
-    this._length = limit;
-    this._validatorFactories.push(VALIDATORS.Length);
-    return this;
-};
-
-function Validator(optional, field) {
-    this.name = 'validator';
-    this.field = field || '';
-    this.optional = optional || false;
-    this.error = '';
-}
-Validator.prototype.validate = function (value) {
-    return true
-};
-
-function TypeValidator(type, optional, field) {
-    Validator.call(this, optional, field);
-
-    this.name = type + ' validator';
-    this.validate = function (value) {
-        if (optional) return true;
-        return getType(value) === type;
-    };
-    var err = {};
-    err[this.field] = 'should be ' + type;
-    this.error = err;
-}
-
-TypeValidator.prototype = new Validator();
-
-function LengthValidator(optional, field, length) {
-    Validator.call(this, optional, field);
-
-    this.name = 'length validator';
-    this.length = length;
-
-    this.validate = function (value) {
-        switch (getType(value)) {
-            case 'string':
-            case 'array':
-                var err = {};
-                err[field] = 'length should be ' + length;
-                this.error = err;
-                return value.length === length;
-            default: 
-                return true;
-        }
-    }
-}
-LengthValidator.prototype = new Validator();
-
-function getType(value) {
-    return Object.prototype.toString.call(value).replace(/\[object (\w+)\]/, '$1').toLowerCase();
-}
 
 module.exports = Atm;
