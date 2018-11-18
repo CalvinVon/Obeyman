@@ -10,4 +10,12 @@ var TYPE = {
     undefined: 8
 };
 
-module.export = TYPE;
+var MODE = {
+    NORMAL: 0,
+    ALLOW: 1
+}
+
+module.exports = {
+    TYPE,
+    MODE
+};
