@@ -1,12 +1,12 @@
 var VALIDATORS = {
     Number: function (schema) {
-        return new TypeValidator('number', schema._optional, schema.key);
+        return new TypeValidator('number', schema._optional, schema.key, schema._value);
     },
     String: function (schema) {
-        return new TypeValidator('string', schema._optional, schema.key);
+        return new TypeValidator('string', schema._optional, schema.key, schema._value);
     },
     Boolean: function (schema) {
-        return new TypeValidator('boolean', schema._optional, schema.key);
+        return new TypeValidator('boolean', schema._optional, schema.key, schema._value);
     },
     Object: function (schema) {
         return new TypeValidator('object', schema._optional, schema.key);
@@ -43,9 +43,10 @@ function getType(value) {
  * @member {String|Object} error when field exist, `error` is an object which key is error field
  * @member {Function} validate every validator must implement this method, return boolean
  */
-function Validator(optional, field) {
+function Validator(optional, field, value) {
     this.name = 'validator';
     this.field = field || '';
+    this.value = value;
     this.optional = optional || false;
     this.error = '';
 }
@@ -53,8 +54,8 @@ Validator.prototype.validate = function (value) {
     return true;
 };
 
-function TypeValidator(type, optional, field) {
-    Validator.call(this, optional, field);
+function TypeValidator(type, optional, field, value) {
+    Validator.call(this, optional, field, value);
 
     this.name = type + ' validator';
     this.validate = function (value) {

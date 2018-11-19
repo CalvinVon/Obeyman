@@ -15,8 +15,10 @@ var MODE = require('./const').MODE;
  * @member {String} _required
  * @member {String} _optional
  * @member {String} _length
+ * @member {String} _value expect value
  * @member {String} _allows whitelist value
- * @member {String} _children children schema
+ * @member {String} _children children schema(object)
+ * @member {String} _items items schema(array)
  * @member {Boolean} is_child
  */
 function Schema() {
@@ -37,6 +39,7 @@ Schema.prototype.required = function () {
 };
 
 Schema.prototype.optional = function () {
+    if (this._value) return this;
     this._required = false;
     this._optional = true;
     return this;
@@ -89,7 +92,26 @@ StringSchema.prototype.alphaNumber = function () {
 }
 
 
+function ArraySchema() {
+    Schema.call(this);
 
+    this._type = 'array';
+}
+
+ArraySchema.prototype = new Schema();
+
+// parameters can be array or multiple values
+// default validate strategy: every item must matches one of listed conditions
+ArraySchema.prototype.items = function () {
+    var items_schema = Array.prototype.slice.call(arguments);
+    if (getType(items_schema[0]) === 'array') {
+        this._items = items_schema[0];
+    }
+    else {
+        this._items = items_schema;
+    }
+    return this;
+}
 
 function ObjectSchema() {
     Schema.call(this);
@@ -109,4 +131,5 @@ ObjectSchema.prototype.keys = function (objectSchema) {
 
 exports.Schema = Schema;
 exports.StringSchema = StringSchema;
+exports.ArraySchema = ArraySchema;
 exports.ObjectSchema = ObjectSchema;
