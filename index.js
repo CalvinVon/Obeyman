@@ -52,8 +52,7 @@ function _validate(target, schema) {
             if (_validator.error) {
                 ERR_STACK.push(_validator.error);
             }
-        }
-        else if (_validatorFactory.name === 'Allow' && schema.mode === CONSTS.MODE.ALLOW) {
+        } else if (_validatorFactory.name === 'Allow' && schema.mode === CONSTS.MODE.ALLOW) {
             schema.valid = true;
         }
 
@@ -96,31 +95,15 @@ function _validate(target, schema) {
     // items schema validate(array)
     var itemsSchema = schema._items;
     if (itemsSchema && target && schema._type === 'array') {
-        var err_index = [];
 
-        // default validate strategy: every item must matches one of listed conditions
-        var result = target.map(function (target_item, target_index) {
-            var itemPassed = itemsSchema.some(function (item_schema) {
-                return !Obeyman.validate(target_item, item_schema);
-            });
-            if (itemPassed) {
-                return itemPassed;
-            }
-            else {
-                err_index.push(target_index);
-            }
-        });
-
+        var required_count = itemsSchema.filter(function (item_schema) {
+            return item_schema._required;
+        }).length;
         
-        if (!result.every(function (res) { return res })) {
-            var err;
-            var err_msg = 
-                'items can`t satisfy all the conditions. They are: '+ 
-                err_index.map(function (_index) {
-                    return (schema.key || 'this') + '[' + _index + ']';
-                })
-                .join(', ');
-
+        // validate required items count
+        if (required_count > target.length) {
+            var err = {},
+                err_msg = 'required items can not less than ' + required_count;
             if (schema.key) {
                 err[schema.key] = err_msg
             } else {
@@ -128,8 +111,42 @@ function _validate(target, schema) {
             }
             ERR_STACK.push(err);
         }
+        else {
+            // default validate strategy: every item must matches one of listed conditions
+            var err_index = [];
 
-            
+            var result = target.map(function (target_item, target_index) {
+                var itemPassed = itemsSchema.some(function (item_schema) {
+                    return !Obeyman.validate(target_item, item_schema);
+                });
+                if (itemPassed) {
+                    return itemPassed;
+                } else {
+                    err_index.push(target_index);
+                }
+            });
+
+
+            if (!result.every(function (res) {
+                    return res
+                })) {
+                var err = {},
+                    err_msg =
+                    'items can`t satisfy all the conditions. They are: ' +
+                    err_index.map(function (_index) {
+                        return (schema.key || 'this') + '[' + _index + ']';
+                    })
+                    .join(', ');
+
+                if (schema.key) {
+                    err[schema.key] = err_msg
+                } else {
+                    err = err_msg;
+                }
+                ERR_STACK.push(err);
+            }
+        }
+
     }
 
     if (ERR_STACK.length) {
@@ -166,8 +183,7 @@ var Obeyman = {
                             err_msg += '\n    at field `' + key + '`, ' + _err[key] + ';';
                         }
                     })
-                }
-                else {
+                } else {
                     err_msg = err_stack[0];
                 }
                 err_msg += '\n';
