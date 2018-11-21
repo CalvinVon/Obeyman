@@ -38,6 +38,6 @@ Obeyman.validate({
     console.log(err);
 })
 
-// Obeyman.validate([123, '321'], Obeyman.array().items(Obeyman.string().len(3)), (err, msg) => {
+// Obeyman.validate([123, '321'], Obeyman.array().items(Obeyman.string().len(3)), function (err, msg) {
 //     console.log(err)
 // })

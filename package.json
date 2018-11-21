@@ -2,9 +2,10 @@
   "name": "obeyman",
   "version": "0.0.1",
   "description": "A simple object schema validate tool",
-  "main": "index.js",
+  "main": "./dist/obeyman.min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -20,5 +21,12 @@
   "bugs": {
     "url": "https://github.com/CalvinVon/Obeyman/issues"
   },
-  "homepage": "https://github.com/CalvinVon/Obeyman#readme"
+  "homepage": "https://github.com/CalvinVon/Obeyman#readme",
+  "devDependencies": {
+    "babel-core": "^6.22.1",
+    "babel-loader": "^7.1.1",
+    "babel-preset-es2015": "^6.24.1",
+    "uglifyjs-webpack-plugin": "^2.0.1",
+    "webpack": "^4.26.0"
+  }
 }

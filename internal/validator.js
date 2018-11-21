@@ -169,7 +169,9 @@ function AllowValidator(whitelist) {
         if (getType(whitelist) !== 'array') {
             whitelist = [];
         }
-        return whitelist.some(item => item === value);
+        return whitelist.some(function (item) {
+            return item === value;
+        });
     }
 }
 AllowValidator.prototype = new Validator();
