@@ -64,8 +64,10 @@ function TypeValidator(type, optional, field, value) {
         }
         return getType(value) === type;
     };
-    var err = {};
-    err[this.field] = 'should be ' + type;
+    var err = {},
+        msg = 'this field should be ' + type;
+    if (field) err[field] = msg;
+    else err = msg;
     this.error = err;
 }
 

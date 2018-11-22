@@ -10,7 +10,8 @@ module.exports = {
         path: path.resolve(__dirname, './dist'),
         filename: '[name].min.js',
         libraryTarget: 'umd',
-        library: 'Obeyman'
+        library: 'Obeyman',
+        globalObject: 'typeof self !== \'undefined\' ? self : this',
     },
     module: {
         rules: [{
