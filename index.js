@@ -20,7 +20,7 @@ function _validate(target, schema) {
     schema.valid = false;
     var ERR_STACK = [];
     if (schema._required) {
-        if (!target) {
+        if (target === undefined) {
             var err = {};
             if (schema.key) {
                 err[schema.key] = 'is required';
@@ -174,7 +174,7 @@ var Obeyman = {
         var err_stack = _validate(target, schema);
 
         if (getType(callback) === 'function') {
-            let err = null;
+            var err = null;
             if (err_stack) {
                 var err_msg = 'Schema validate failed, ';
                 if (getType(err_stack[0]) === 'object') {
